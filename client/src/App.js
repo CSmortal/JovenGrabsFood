@@ -1,42 +1,25 @@
-import React, { useEffect, useState, useContext, createContext } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import React, { useEffect, useState, createContext } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 import Login from './components/logged-out-pages/Login'
 import Register from './components/logged-out-pages/Register'
 import Consumer from './components/logged-in-pages/Consumer'
 import Merchant from './components/logged-in-pages/Merchant'
 import Deliverer from './components/logged-in-pages/Deliverer'
-// import { AuthContextProvider, AuthContext } from './context/AuthContext';
+
 export const AuthContext = createContext()
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  // const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext)
-
   // selects which route to go to if authenticated: Merchant, Consumer or Deliverer
   const selectComponentToRouteTo = () => {
-    // this will be called only if isAuthenticated is true
-
     // remove this guard clause once tested
     if (!isAuthenticated) {
       throw new Error("isAuthenticated is false but the app tried to go to private route")
     }
     const userType = localStorage.getItem("userType")
 
-    switch (userType) {
-      // might not work since userType is a symbol of a string, not a string
-      case "consumer":
-        return <Consumer />
-
-      case "merchant":
-        return <Merchant />
-
-      case "deliverer":
-        return <Deliverer />
-
-      default:
-        throw new Error("Couldnt decide which private route to route to")
-    }
+    return <Navigate to={`/${userType}`} />
   }
 
   const checkAuthenticated = async () => {
@@ -54,9 +37,6 @@ function App() {
     }
   }
 
-  // const setAuth = bool => {
-  //   setIsAuthenticated(bool)
-  // }
 
   useEffect(() => {
     checkAuthenticated()
@@ -69,23 +49,12 @@ function App() {
       <BrowserRouter>
         <Routes>
 
-          <Route path='/login' 
-              element={
-                !isAuthenticated
-                  ? <Login />
-                  : selectComponentToRouteTo()
-              }>
-
-          </Route>
-
-          <Route path='/register' 
-              element={
-                !isAuthenticated
-                  ? <Register />
-                  : selectComponentToRouteTo()
-              }>
-
-          </Route>
+          <Route path='/login' element={!isAuthenticated ? <Login /> : selectComponentToRouteTo()} />
+          <Route path='/register' element={!isAuthenticated ? <Register /> : selectComponentToRouteTo()}/>
+    
+          <Route path='/merchant' element={isAuthenticated ? <Merchant /> : <Navigate to="/login" replace={true}/>}/>
+          <Route path='/consumer' element={isAuthenticated ? <Consumer /> : <Navigate to="/login" replace={true}/>}/>
+          <Route path='/deliverer' element={isAuthenticated ? <Deliverer /> : <Navigate to="/login" replace={true}/>}/>
 
         </Routes>
       </BrowserRouter>
