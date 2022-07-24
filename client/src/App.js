@@ -6,6 +6,7 @@ import Register from './components/logged-out-pages/Register'
 import Consumer from './components/logged-in-pages/Consumer'
 import Merchant from './components/logged-in-pages/Merchant'
 import Deliverer from './components/logged-in-pages/Deliverer'
+import MerchantAddItem from './components/logged-in-pages/MerchantAddItem';
 
 export const AuthContext = createContext()
 
@@ -14,6 +15,7 @@ function App() {
   // selects which route to go to if authenticated: Merchant, Consumer or Deliverer
   const selectComponentToRouteTo = () => {
     // remove this guard clause once tested
+
     if (!isAuthenticated) {
       throw new Error("isAuthenticated is false but the app tried to go to private route")
     }
@@ -45,14 +47,17 @@ function App() {
   return (
     // We have a Login screen and a Register screen.
     // Register screen will give 3 options to register as: Consumer, Merchant, Deliverer. Email
+    // paths that start with '/' are absolute paths
     <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
       <BrowserRouter>
         <Routes>
-
+          <Route index element={!isAuthenticated ? <Login /> : selectComponentToRouteTo()}/>
           <Route path='/login' element={!isAuthenticated ? <Login /> : selectComponentToRouteTo()} />
           <Route path='/register' element={!isAuthenticated ? <Register /> : selectComponentToRouteTo()}/>
     
-          <Route path='/merchant' element={isAuthenticated ? <Merchant /> : <Navigate to="/login" replace={true}/>}/>
+          <Route path='/merchant' element={isAuthenticated ? <Merchant /> : <Navigate to="/login" replace={true}/>}>
+            <Route path='addItem' element={<MerchantAddItem />}/>
+          </Route>
           <Route path='/consumer' element={isAuthenticated ? <Consumer /> : <Navigate to="/login" replace={true}/>}/>
           <Route path='/deliverer' element={isAuthenticated ? <Deliverer /> : <Navigate to="/login" replace={true}/>}/>
 

@@ -7,5 +7,24 @@ CREATE TABLE Users (
     user_name VARCHAR(255) NOT NULL,
     user_email VARCHAR(255) NOT NULL UNIQUE,
     user_password VARCHAR(255) NOT NULL,
-    user_type VARCHAR(255) NOT NULL
+    user_type VARCHAR(255) NOT NULL,
+    PRIMARY KEY (user_id)
+);
+
+CREATE TABLE FoodItem (
+    item_id PRIMARY KEY BIGSERIAL,
+    user_id uuid REFERENCES Users,
+    item_price NUMERIC NOT NULL check (item_price > 0),
+    item_name VARCHAR(255) NOT NULL,
+    item_image_url VARCHAR(255) NOT NULL,
+);
+
+CREATE TABLE FoodItemSections (
+    item_id BIGSERIAL REFERENCES FoodItem,
+    item_section_name VARCHAR(255) NOT NULL,
+    item_section_option VARCHAR(255) NOT NULL,
+    price_change NUMERIC NOT NULL,
+    -- section_name is the title of a section that contains options
+    PRIMARY KEY (item_id, item_section_name, item_section_option) 
+    -- Options are unique within a section
 );
