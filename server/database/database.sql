@@ -12,19 +12,20 @@ CREATE TABLE Users (
 );
 
 CREATE TABLE FoodItem (
-    item_id PRIMARY KEY BIGSERIAL,
+    item_id BIGSERIAL,
     user_id uuid REFERENCES Users,
     item_price NUMERIC NOT NULL check (item_price > 0),
     item_name VARCHAR(255) NOT NULL,
     item_image_url VARCHAR(255) NOT NULL,
+    PRIMARY KEY(item_id)
 );
 
 CREATE TABLE FoodItemSections (
     item_id BIGSERIAL REFERENCES FoodItem,
     item_section_name VARCHAR(255) NOT NULL,
-    item_section_option VARCHAR(255) NOT NULL,
-    price_change NUMERIC NOT NULL,
-    -- section_name is the title of a section that contains options
-    PRIMARY KEY (item_id, item_section_name, item_section_option) 
+    option_description VARCHAR(255) NOT NULL,
+    option_price_change NUMERIC NOT NULL,
+    -- item_section_name is the title of a section that contains options
+    PRIMARY KEY (item_id, item_section_name, option_description) 
     -- Options are unique within a section
 );

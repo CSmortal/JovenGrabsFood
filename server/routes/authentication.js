@@ -38,7 +38,7 @@ router.post("/register", validateCreds, async (req, res) => {
     // 5. Return jwt token as well as userType (to know which front end page to go to once logged in)
     const jwtToken = jwtGenerator(newUser.rows[0].user_id)
 
-    res.json({ jwtToken, userType })
+    res.json({ jwtToken, userType, userName: name })
 
   } catch (error) {
     console.error(error.message);
@@ -66,8 +66,9 @@ router.post("/login", validateCreds, async (req, res) => {
 
     const jwtToken = jwtGenerator(user.rows[0].user_id)
     const userType = user.rows[0].user_type
+    const userName = user.rows[0].user_name
 
-    res.json({ jwtToken, userType });
+    res.json({ jwtToken, userType, userName });
 
   } catch (error) {
     console.error(error.message);

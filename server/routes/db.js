@@ -8,15 +8,18 @@ router.post("/insert-food-item", async (req, res) => {
     const { merchantName, imageUrl, itemSections, itemPrice, itemName } = req.body
 
     const merchantId = await db.query("SELECT user_id FROM Users WHERE user_name = $1", [merchantName])
-    
-    const itemId = await db.query("INSERT INTO FoodItem VALUES($1, DEFAULT, $2, $3, $4) RETURNING item_id",
-        [merchantId, itemPrice, itemName, imageUrl])
+      .then(res => res.rows[0].user_id)
 
-    itemSections.array.forEach(section => {
-      section.options.forEach(sectionOption => {
-        // sectionOption looks like {description: ___, price_change: ___}
+    const itemId = await db.query("INSERT INTO FoodItem VALUES(DEFAULT, $1, $2, $3, $4) RETURNING item_id",
+        [merchantId, itemPrice, itemName, imageUrl])
+            .then(res => res.rows[0].item_id)
+
+    
+    itemSections.forEach(async (section) => {
+      section.options.forEach(async (sectionOption) => {
+        // sectionOption looks like {description: ___, priceChange: ___}
         await db.query("INSERT INTO FoodItemSections VALUES($1, $2, $3, $4)",
-          [itemId, section.section_name, sectionOption.description, sectionOption.price_change])
+          [itemId, section.section_name, sectionOption.description, sectionOption.priceChange])
       })
     });
 

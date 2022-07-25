@@ -42,6 +42,7 @@ export default function Register() {
       if (response) {
         localStorage.setItem("jwtToken", response.jwtToken)
         localStorage.setItem("userType", response.userType)
+        localStorage.setItem("userName", response.userName)
         setIsAuthenticated(true)
       }
 

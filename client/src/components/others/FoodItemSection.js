@@ -1,30 +1,49 @@
-import { useState } from 'react'
+import { useState, Fragment } from 'react'
 import FoodItemSectionOption from './FoodItemSectionOption'
+import { useDispatch } from 'react-redux'
+import { addFoodItemActions as actions } from '../../store/addFoodItemSlice'
 
-
-export default function FoodItemSection({ key, removeSection, setSection, value }) {
-  
-  const [sectionData, setSectionData] = useState(value)
+export default function FoodItemSection({ id, value }) {
+  const dispatch = useDispatch()
 
   return (
-    <div>
-      {/* Position this button to the top right, and transform into some icon with a minus */}
-      <button onClick={() => removeSection(key)}>Remove Section</button>
+    <>
+      <div className="mt-4">
+        {/* Position this button to the top right, and transform into some icon with a minus */}
+        <button onClick={e => {
+          e.preventDefault()
+          dispatch(actions.removeSection(id))
+        }}>-</button>
 
-      <input 
-        type="text" 
-        placeholder="Section Title" 
-        value={value.section_name} 
-        onChange={() => setSection(key, sectionData)}
-      />
-
-      {value.options.map(option => (
-        <FoodItemSectionOption 
-          description={option.description}
-          priceChange={option.price_change}
-          setSection={setSection}
+        <input 
+          type="text" 
+          placeholder="Section Name" 
+          value={value.section_name} 
+          onChange={e => dispatch(actions.setSectionName({
+            idToEdit: id,
+            newSectionName: e.target.value
+          }))}
         />
-      ))}
-    </div>
+
+        {value.options.map(option => (
+          <FoodItemSectionOption
+            key={option.id}
+            sectionId={id}
+            optionId={option.id} 
+            description={option.description}
+            priceChange={option.price_change}
+          />
+        ))}
+
+      </div>
+
+      <div>
+        <button onClick={e => {
+          e.preventDefault();
+          dispatch(actions.addOption(id))
+        }}>Add Option</button>
+      </div>
+    </>
+
   )
 }

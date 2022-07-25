@@ -7,8 +7,7 @@ export default function Logout() {
   const logout = e => {
     e.preventDefault();
     try {
-      localStorage.removeItem("jwtToken")
-      localStorage.removeItem("userType")
+      localStorage.clear()
       setIsAuthenticated(false)
     } catch (error) {
       console.error(error.message)

@@ -14,7 +14,7 @@ const s3 = new AWS.S3({
 
 router.post("/insert-food-image", upload.single('imageInput'), async (req, res) => {
   const fileStream = fs.createReadStream(req.file.path)
-  console.log(req.file)
+  // console.log(req.file)
   try {
     const uploadParams = {
       Body: fileStream,
@@ -23,9 +23,8 @@ router.post("/insert-food-image", upload.single('imageInput'), async (req, res) 
     }
 
     const result = await s3.upload(uploadParams).promise()
+    res.json(result)
 
-    console.log(result)
-    res.json("Put object")
   } catch (error) {
     console.error(error.message)
   }

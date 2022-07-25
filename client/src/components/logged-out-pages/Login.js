@@ -37,9 +37,10 @@ export default function Login() {
       
 
       if (response) {
-        console.log(response)
+        // console.log(response)
         localStorage.setItem("jwtToken", response.jwtToken)
         localStorage.setItem("userType", response.userType)
+        localStorage.setItem("userName", response.userName)
         setIsAuthenticated(true) // responsible for routing to the next route from login screen
       }
 
