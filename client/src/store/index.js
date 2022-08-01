@@ -1,9 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { addFoodItemSlice } from './addFoodItemSlice'
+import addFoodItemReducer, { addFoodItemSlice } from './addFoodItemSlice'
+import merchantItemsReducer, { merchantItemsSlice } from './merchantItemsSlice'
+import orderFoodItemReducer, { orderFoodItemSlice } from './orderFoodItemSlice'
 
 const store = configureStore({
   reducer: {
-    addFoodItem: addFoodItemSlice.reducer
+    addFoodItem: addFoodItemReducer,
+    merchantItems: merchantItemsReducer,
+    orderFoodItem: orderFoodItemReducer,
   }
 })
 

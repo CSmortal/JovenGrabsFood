@@ -3,10 +3,12 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 import Login from './components/logged-out-pages/Login'
 import Register from './components/logged-out-pages/Register'
-import Consumer from './components/logged-in-pages/Consumer'
-import Merchant from './components/logged-in-pages/Merchant'
-import Deliverer from './components/logged-in-pages/Deliverer'
-import MerchantAddItem from './components/logged-in-pages/MerchantAddItem';
+import Consumer from './components/consumer/Consumer'
+import Merchant from './components/merchant/Merchant'
+import Deliverer from './components/deliverer/Deliverer'
+import MerchantAddItem from './components/merchant/MerchantAddItem';
+import ViewMerchantPage from './components/consumer/ViewMerchantPage';
+import OrderItemPage from './components/consumer/OrderItemPage';
 
 export const AuthContext = createContext()
 
@@ -58,7 +60,10 @@ function App() {
           <Route path='/merchant' element={isAuthenticated ? <Merchant /> : <Navigate to="/login" replace={true}/>}>
             <Route path='addItem' element={<MerchantAddItem />}/>
           </Route>
-          <Route path='/consumer' element={isAuthenticated ? <Consumer /> : <Navigate to="/login" replace={true}/>}/>
+          <Route path='/consumer' element={isAuthenticated ? <Consumer /> : <Navigate to="/login" replace={true}/>}>
+            <Route path='viewMerchant/:name' element={<ViewMerchantPage />}/>
+            <Route path='viewSelectedItem/:itemId' element={<OrderItemPage />} />
+          </Route>
           <Route path='/deliverer' element={isAuthenticated ? <Deliverer /> : <Navigate to="/login" replace={true}/>}/>
 
         </Routes>

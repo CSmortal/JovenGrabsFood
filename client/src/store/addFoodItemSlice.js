@@ -1,4 +1,4 @@
-import { createSlice, current } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
 let sectionIdCounter = 0
 let optionIdCounter = 0
@@ -10,7 +10,8 @@ export const addFoodItemSlice = createSlice({
     price: "",
     name: "",
     imageFile: "",
-    sections: [] 
+    sections: [],
+    category: "",
   },
 
   reducers: {
@@ -46,6 +47,10 @@ export const addFoodItemSlice = createSlice({
       state.imageFile = action.payload
     },
 
+    setItemCategory(state, action) {
+      state.category = action.payload
+    },
+
     setSectionName(state, action) {
       const { idToEdit, newSectionName } = action.payload
       state.sections.map(section => {
@@ -55,6 +60,7 @@ export const addFoodItemSlice = createSlice({
         return section
       })
     },
+
 
     addOption(state, action) {
       const sectionIdToEdit = action.payload

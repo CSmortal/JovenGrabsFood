@@ -1,16 +1,19 @@
-import React, { Fragment, useState } from 'react'
-import FoodItemSection from '../others/FoodItemSection'
+import React, { Fragment, useState, useEffect } from 'react'
+import FoodItemSection from './FoodItemSection'
 import { useDispatch, useSelector } from 'react-redux'
 import { addFoodItemActions as actions } from '../../store/addFoodItemSlice'
+import { fetchFoodCategories } from '../../store/dbActions'
 const axios = require('axios')
 
 // come back later to find out how to save images (non serialisable) to redux
 
 export default function MerchantAddItem() {
   const dispatch = useDispatch()
-  const { price, name, imageFile, sections } = useSelector(state => state.addFoodItem)
+  const { price, name, imageFile, sections, category } = useSelector(state => state.addFoodItem)
   const [selectedFile, setSelectedFile] = useState()
+  const [foodCategories, setFoodCategories] = useState()
   const merchantName = localStorage.getItem("userName")
+  
 
   const handleSubmission = async (e) => {
     e.preventDefault()
@@ -31,12 +34,13 @@ export default function MerchantAddItem() {
       */
     
       // call the backend route for adding the food item
-      const dbResponse = await axios.post("http://localhost:5000/db/insert-food-item", {
+      const dbResponse = await axios.post("http://localhost:5000/db/food-item", {
         itemName: name,
         itemPrice: price,
         imageUrl: awsResponse.Location,
         itemSections: sections,
-        merchantName
+        merchantName,
+        itemCategory: category,
       })
 
       // console.log(dbResponse)
@@ -48,9 +52,22 @@ export default function MerchantAddItem() {
   }
 
   const handleSelectFile = e => {
-    // console.log(e.target.files[0])
     setSelectedFile(e.target.files[0])
   }
+
+  useEffect(() => {
+    const getFoodCategoriesFromDb = async () => {
+      const response = await axios.get("http://localhost:5000/db/food-categories").then(res => res.data)
+      return response
+    }
+
+    try {
+      getFoodCategoriesFromDb().then(res => setFoodCategories(res))
+    } catch (error) {
+      console.error(error.message)
+    }
+  }, [])
+
 
   return (
     <>
@@ -84,6 +101,17 @@ export default function MerchantAddItem() {
           value={price} 
           onChange={e => dispatch(actions.setItemPrice(e.target.value))}
         />
+
+        <label htmlFor="category-select">Select a food category:</label>
+        <select 
+          name="categories" 
+          id="category-select" 
+          onChange={e => dispatch(actions.setItemCategory(e.target.value))}
+        >
+          {foodCategories && foodCategories.map(category => {
+            return (<option key={category}>{category}</option>)
+          })}
+        </select>
 
         {sections && sections.map(section => (
           <FoodItemSection 

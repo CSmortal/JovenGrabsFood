@@ -17,6 +17,7 @@ CREATE TABLE FoodItem (
     item_price NUMERIC NOT NULL check (item_price > 0),
     item_name VARCHAR(255) NOT NULL,
     item_image_url VARCHAR(255) NOT NULL,
+    item_category VARCHAR(255) NOT NULL, 
     PRIMARY KEY(item_id)
 );
 
@@ -29,3 +30,21 @@ CREATE TABLE FoodItemSections (
     PRIMARY KEY (item_id, item_section_name, option_description) 
     -- Options are unique within a section
 );
+
+CREATE TABLE FoodCategory (
+    category_id SERIAL,
+    category_description VARCHAR(255) NOT NULL,
+    PRIMARY KEY (category_id)
+);
+
+INSERT INTO FoodCategory VALUES
+    (DEFAULT, 'Western'),
+    (DEFAULT, 'Japanese'),
+    (DEFAULT, 'Halal'),
+    (DEFAULT, 'Chinese'),
+    (DEFAULT, 'Local'),
+    (DEFAULT, 'Beverages'),
+    (DEFAULT, 'Indian'),
+    (DEFAULT, 'Dessert'),
+    (DEFAULT, 'Fast Food'),
+    (DEFAULT, 'Seafood');

@@ -38,6 +38,7 @@ export default function Register() {
         body: JSON.stringify({...inputs, userType})
       }).then(res => res.json())
       
+      
       // we need to pass jwt token to client
       if (response) {
         localStorage.setItem("jwtToken", response.jwtToken)
