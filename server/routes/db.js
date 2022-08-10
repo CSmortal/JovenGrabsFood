@@ -81,7 +81,7 @@ router.get("/itemDetails/:itemId", async (req, res) => {
   try {
     const itemId = req.params.itemId
     
-    const basicDetails = await db.query("SELECT user_id, item_price, item_name, item_image_url FROM FoodItem WHERE item_id = $1",
+    const basicDetails = await db.query("SELECT user_name, item_price, item_name, item_image_url FROM FoodItem natural join Users WHERE item_id = $1",
             [itemId]).then(res => res.rows[0]) // single object
     const sectionDetails = await db.query("SELECT item_section_name, option_description, option_price_change FROM FoodItemSections " +
             "WHERE item_id = $1", [itemId]).then(res => res.rows) // array of object(s)

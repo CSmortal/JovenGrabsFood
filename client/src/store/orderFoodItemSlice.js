@@ -5,7 +5,7 @@ export const orderFoodItemSlice = createSlice({
 
   initialState: {
     basicDetails: {
-      merchantId: "",
+      merchantName: "",
       price: 0,
       name: "",
       imageUrl: ""
@@ -23,10 +23,14 @@ export const orderFoodItemSlice = createSlice({
   reducers: {
 
     setBasicDetails(state, action) {
-      const { user_id:merchantId, item_price:price, item_name:name, item_image_url:imageUrl } = action.payload
+      const { user_name:merchantName, item_price:price, item_name:name, item_image_url:imageUrl } = action.payload
+
+      // for (let property in action.payload) {
+      //   console.log(`${property}: ${typeof action.payload[property]}`)
+      // }
 
       state.basicDetails = {
-        merchantId,
+        merchantName,
         price,
         name,
         imageUrl

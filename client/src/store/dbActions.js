@@ -30,6 +30,7 @@ export const getItemDetails = (itemId) => {
 
     try {
       const data = await fetchData()
+
       dispatch(orderFoodItemActions.setBasicDetails(data.basicDetails))
       dispatch(orderFoodItemActions.setSectionDetails(data.sectionDetails))
 
@@ -38,3 +39,4 @@ export const getItemDetails = (itemId) => {
     }
   }
 }
+

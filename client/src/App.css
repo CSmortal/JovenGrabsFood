@@ -1,3 +1,7 @@
+body {
+  margin: 0;
+}
+
 .App {
   text-align: center;
 }
@@ -33,10 +37,28 @@
 }
 
 .merchantsWithinCategory {
+  display: flex;
+  white-space: nowrap;
+  overflow-x: auto;
+  width: 100%;
+  padding: 2vh 10vw;
+}
+
+.merchantWithinCategory {
+  padding: 0 6px;
+}
+
+.unacceptedOrders {
+  display: flex;
   white-space: nowrap;
   overflow-x: auto;
   width: 100%;
 }
+
+.categoryName {
+  padding-left: 5vw;
+}
+
 
 @keyframes App-logo-spin {
   from {

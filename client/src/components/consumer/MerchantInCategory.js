@@ -10,7 +10,7 @@ export default function MerchantInCategory({ merchantName }) {
   }
 
   return (
-    <div onClick={handleClick}>
+    <div onClick={handleClick} className="merchantWithinCategory">
       <h2 className="text-center font-weight-bold">{merchantName}</h2>
     </div>
     
