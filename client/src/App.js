@@ -50,6 +50,7 @@ function App() {
     // We have a Login screen and a Register screen.
     // Register screen will give 3 options to register as: Consumer, Merchant, Deliverer. Email
     // paths that start with '/' are absolute paths
+
     <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
       <BrowserRouter>
         <Routes>
@@ -69,6 +70,8 @@ function App() {
         </Routes>
       </BrowserRouter>
     </AuthContext.Provider>
+
+
 
   );
 }

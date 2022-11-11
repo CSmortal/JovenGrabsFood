@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Stack, Box, Typography, Divider, styled, IconButton, Button } from "@mui/material";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { cartSliceActions } from "../../store/cartSlice";
@@ -13,6 +13,7 @@ const QtyEditor = styled(Stack)({
 })
 
 export default function Cart({ toggleDrawer }) {
+  const consumerDetails = useSelector(state => state.userDetails)
   const { itemsList, totalNetPrice } = useSelector(state => state.cart)
   const [ socket, setSocket ] = useState(null)
   const dispatch = useDispatch()
@@ -31,19 +32,18 @@ export default function Cart({ toggleDrawer }) {
       console.log("Cart disconnected from server socket")
     })
 
-    // socket.on('send order', msg => {console.log(msg)})
 
     return () => {
       socket.off('connect')
       socket.off('disconnect')
-      socket.off('send order')
     }
 
   }, [])
 
   const handleCheckout = () => {
-    socket.emit('order', itemsList, localStorage.getItem("userName")) // need to send both itemsList as well as the consumer's name (the one who made this order)
-    dispatch(cartSliceActions.clearCart())
+    socket.emit('order', itemsList, consumerDetails) // need to send both itemsList as well as the consumer's name (the one who made this order)
+    // dispatch(cartSliceActions.clearCart())
+    console.log("consumerDetails: " + JSON.stringify(consumerDetails))
   }
 
 
@@ -77,7 +77,7 @@ export default function Cart({ toggleDrawer }) {
                     if (option.isSelected) {
                       return <Typography variant="body2" key={typoCounter++}>{option.description}</Typography>
                     } else {
-                      return "" // might cause issue
+                      return ""
                     }
                   })
                 })}

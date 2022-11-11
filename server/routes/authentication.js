@@ -8,7 +8,7 @@ const validateJwt = require("../middleware/validateJwt")
 const { getUserTypeString, getUserTypeEnum } = require("../../usersEnum")
 
 router.post("/register", validateCreds, async (req, res) => {
-  const { email, password, name, userType } = req.body
+  const { email, password, name, address, userType } = req.body
 
   try {
     // 1. Check if user already exists
@@ -25,20 +25,19 @@ router.post("/register", validateCreds, async (req, res) => {
 
     // 3. Get the correct user type (as string) for storing in db
 
-
-    // if (isMerchant) userType = "merchant"
-    // else if (isConsumer) userType = "consumer"
-    // else if (isDeliverer) userType = "deliverer"
-    // else throw new Error("Invalid user type")
-
     // 4. Insert new user into db
-    const newUser = await db.query("INSERT INTO users VALUES (DEFAULT, $1, $2, $3, $4) RETURNING *",
-        [name, email, bcryptPassword, userType])
+    const newUser = await db.query("INSERT INTO users VALUES (DEFAULT, $1, $2, $3, $4, $5) RETURNING *",
+        [name, email, bcryptPassword, userType, address])
 
     // 5. Return jwt token as well as userType (to know which front end page to go to once logged in)
     const jwtToken = jwtGenerator(newUser.rows[0].user_id)
 
-    res.json({ jwtToken, userType, userName: name })
+    res.json({ 
+      jwtToken,
+      userType, 
+      userName: name, 
+      userAddress: address
+    })
 
   } catch (error) {
     console.error(error.message);
@@ -67,8 +66,9 @@ router.post("/login", validateCreds, async (req, res) => {
     const jwtToken = jwtGenerator(user.rows[0].user_id)
     const userType = user.rows[0].user_type
     const userName = user.rows[0].user_name
+    const userAddress = user.rows[0].user_address
 
-    res.json({ jwtToken, userType, userName });
+    res.json({ jwtToken, userType, userName, userAddress });
 
   } catch (error) {
     console.error(error.message);

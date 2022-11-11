@@ -49,10 +49,15 @@ router.get("/merchants-by-category/:category", async (req, res) => {
     const category = req.params.category
 
     // we will retrieve the images for each merchant too ltr, since we dont want to incur AWS GET requests unnecessarily. We shud use Redis for this
-    const userNames = await db.query("SELECT DISTINCT user_name FROM Users natural join FoodItem WHERE item_category = $1", [category])
+    const userNames = await db.query("SELECT DISTINCT user_name, user_address FROM Users natural join FoodItem WHERE item_category = $1", [category])
         .then(res => res.rows)
         
-    const response = userNames.map(userNameObj => userNameObj.user_name)
+    const response = userNames.map(userNameObj => {
+      return {
+        merchantName: userNameObj.user_name,
+        merchantAddress: userNameObj.user_address
+      }
+    })
 
     res.json(response)
 

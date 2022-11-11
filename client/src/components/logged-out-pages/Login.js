@@ -1,6 +1,8 @@
 import React, { useState, useContext, Fragment } from 'react'
+import { useDispatch } from 'react-redux';
 import { Link } from "react-router-dom";
 import { AuthContext } from '../../App';
+import { userDetailsSliceActions } from '../../store/userDetailsSlice';
 
 
 export default function Login() {
@@ -11,6 +13,7 @@ export default function Login() {
     password: ""
   })
   const { email, password } = inputs
+  const dispatch = useDispatch()
 
   const onInputChange = (e) => {
   
@@ -37,11 +40,20 @@ export default function Login() {
       
 
       if (response) {
-        // console.log(response)
         localStorage.setItem("jwtToken", response.jwtToken)
         localStorage.setItem("userType", response.userType)
         localStorage.setItem("userName", response.userName)
         setIsAuthenticated(true) // responsible for routing to the next route from login screen
+        dispatch(userDetailsSliceActions.setUserDetails({
+          name: response.userName,
+          address: response.userAddress,
+        }))
+
+        // only for dev convenience, will remove later
+        localStorage.setItem("userDetails", {
+          name: response.userName,
+          address: response.userAddress,
+        })
       }
 
     } catch (error) {

@@ -3,7 +3,7 @@ import MerchantInCategory from './MerchantInCategory'
 const axios = require('axios')
 
 export default function MerchantsInCategory({ category }) {
-  const [merchantNames, setMerchantNames] = useState()
+  const [merchants, setMerchants] = useState([]) // array of merchant objects {merchantName: __, merchantAddress: ___}
   // 1. state that contains all merchants that sell items of this category
   useEffect(() => {
     // might want to change this later because this is one network call per category
@@ -14,7 +14,7 @@ export default function MerchantsInCategory({ category }) {
     }
     
     try {
-      getMerchantsForCategory().then(res => setMerchantNames(res))
+      getMerchantsForCategory().then(res => setMerchants(res))
     } catch (error) {
       console.error(error.message)
     }
@@ -22,7 +22,13 @@ export default function MerchantsInCategory({ category }) {
 
   return (
     <div className="merchantsWithinCategory">
-      { merchantNames && merchantNames.map(name => <MerchantInCategory key={name} merchantName={name} />) }
+      { merchants.length > 0 && merchants.map(merchantObj => (
+        <MerchantInCategory 
+          key={`${merchantObj.merchantName} ${merchantObj.merchantAddress}`} 
+          merchantName={merchantObj.merchantName}
+          merchantAddress={merchantObj.merchantAddress}
+        />) 
+      )}
     </div>
   )
 }

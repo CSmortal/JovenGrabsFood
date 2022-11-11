@@ -1,5 +1,5 @@
 import Logout from "../others/Logout";
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useContext, useEffect, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { io } from 'socket.io-client'
 import { AppBar, Avatar, Stack, Toolbar, Typography } from "@mui/material";
@@ -10,6 +10,7 @@ import AcceptedOrder from "./AcceptedOrder";
 
 
 export default function Merchant() {
+  let merchantDetails = useSelector(state => state.userDetails)
   const navigate = useNavigate()
   const [socket, setSocket] = useState()
   let counter = 1
@@ -17,38 +18,51 @@ export default function Merchant() {
   const { orderList: unacceptedOrderList } = useSelector(state => state.unacceptedOrder)
   const { orderList: acceptedOrderList } = useSelector(state => state.acceptedOrder) 
 
+  // remove later, this is for dev convenience
+  if (merchantDetails.name === "" && merchantDetails.address === "") {
+    merchantDetails = localStorage.getItem("userDetails")
+    // console.log(JSON.stringify(localStorage.getItem("userDetails")))
+    // console.log(JSON.stringify(merchantDetails))
+  }
+
+  console.log(merchantDetails)
 
   useEffect(() => {
     const socket = io("http://localhost:5000")
 
     setSocket(socket)
 
-    socket.on('connect', () => {
-      console.log("Merchant connected to server socket")
-    })
+    // socket.on('connect', () => {
+    //   console.log("Merchant connected to server socket")
+    // })
 
-    socket.on('disconnect', () => {
-      console.log("Merchant disconnected from server socket")
-    })
+    // socket.on('disconnect', () => {
+    //   console.log("Merchant disconnected from server socket")
+    // })
 
-    socket.on("send order", ({ nameOfOrderer, items }) => {
-      // setUnacceptedOrders(currArr => {
-      //   let newArr = [...currArr] // if this step is not done, this component will NOT rerender
-      //   newArr.push(itemsInOrder)
-      //   return newArr
-      // })
-      dispatch(unacceptedOrderSliceActions.addOrder({nameOfOrderer, items}))
+    socket.on('processed order', (orderObj) => {
+      /* orderObj looks like: { 
+          ordererDetails: consumerDetails, // {name: __, address: ___}
+          orderItems: [item],
+          orderId: orderNumber // even if food item A and B are from different merchants, they would have the same order id
+        } */
+
+      dispatch(unacceptedOrderSliceActions.addOrder({ 
+        ...orderObj, 
+        merchantDetails, // { name: , address: }
+      }))
     })
 
     // for each merchant, we want to store this socket on server side in an array, and make it join a room
     socket.emit('merchantToServer', localStorage.getItem("userName"))
 
     return () => {
-      socket.off('connect')
-      socket.off('disconnect')
+      // socket.off('connect')
+      // socket.off('disconnect')
+      socket.off('processed order')
     }
 
-  }, [dispatch])
+  }, [dispatch, merchantDetails])
   
 
   return (
@@ -66,15 +80,37 @@ export default function Merchant() {
 
         <Logout />
 
+        <Typography variant="h4" sx={{mt: 3, mb: 2, display: "flex", justifyContent: "center"}}>Unaccepted Orders</Typography>
+
         <div className="unacceptedOrders">
-          {unacceptedOrderList.length > 0 && unacceptedOrderList.map(orderObj => (
-            <UnacceptedOrder order={orderObj.items} ordererName={orderObj.nameOfOrderer}/>
-          ))}
+          {unacceptedOrderList.length > 0 
+            ? unacceptedOrderList.map(orderObj => {
+
+              return (
+                <UnacceptedOrder 
+                  orderItems={orderObj.orderItems} 
+                  ordererDetails={orderObj.ordererDetails} 
+                  orderId={orderObj.orderId}
+                  merchantDetails={orderObj.merchantDetails}
+                />
+              )
+            })
+
+            : <Typography variant="h6">There is currently no unaccepted orders</Typography>
+
+            }
         </div>
 
-        <Stack sx={{display: "flex", whiteSpace: "nowrap", overflowX: "auto", width: 1, py: 3, px: 2}}>
+        <Typography variant="h4" sx={{mt: 3, mb: 2, display: "flex", justifyContent: "center"}}>Accepted Orders</Typography>
+
+        <Stack direction="row" sx={{whiteSpace: "nowrap", overflowX: "auto", width: 1, py: 3, px: 2}}>
           {acceptedOrderList.length > 0 && acceptedOrderList.map(orderObj => (
-            <AcceptedOrder order={orderObj.items} />
+            <AcceptedOrder 
+              orderItems={orderObj.orderItems} 
+              ordererDetails={orderObj.ordererDetails} 
+              orderId={orderObj.orderId}
+              merchantDetails={orderObj.merchantDetails}
+            />
           ))}
         </Stack>
 

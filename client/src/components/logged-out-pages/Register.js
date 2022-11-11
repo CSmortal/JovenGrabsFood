@@ -1,6 +1,8 @@
 import React, { useState, useContext, Fragment } from 'react'
+import { useDispatch } from 'react-redux';
 import { Link } from "react-router-dom";
 import { AuthContext } from '../../App';
+import { userDetailsSliceActions } from '../../store/userDetailsSlice';
 
 
 export default function Register() {
@@ -12,8 +14,10 @@ export default function Register() {
     email: "",
     password: "",
     name: "",
+    address: "",
   })
-  const { email, password, name } = inputs
+  const { email, password, name, address } = inputs
+  const dispatch = useDispatch()
 
   const onInputChange = e => {
     setInputs({
@@ -45,6 +49,10 @@ export default function Register() {
         localStorage.setItem("userType", response.userType)
         localStorage.setItem("userName", response.userName)
         setIsAuthenticated(true)
+        dispatch(userDetailsSliceActions.setUserDetails({
+          name: response.userName,
+          address: response.userAddress,
+        }))
       }
 
 
@@ -83,6 +91,17 @@ export default function Register() {
           onChange={e => onInputChange(e)}
           className="form-control my-3"
         />
+        { userType !== "deliverer" && 
+            <input
+              type="text"
+              name="address"
+              value={address}
+              placeholder="address"
+              onChange={e => onInputChange(e)}
+              className="form-control my-3"
+            />
+        }
+        
 
         <h2>Are you using JovenGrabsFood as a ...</h2>
 

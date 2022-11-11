@@ -20,7 +20,7 @@ export default function OrderItemPage() {
   const handleSubmitForm = e => {
     e.preventDefault()
     dispatch(cartSliceActions.addItemToCart({ itemOrderDetails, itemOrderQty }))
-    navigate(-1)
+    navigate(-2)
   }
 
   const handleDecrementQty = () => {
